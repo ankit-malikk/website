@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PYQS – Semester 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #060d14;
+    --bg2: #0b1520;
+    --bg3: #0f1e2e;
+    --card: #0d1b29;
+    --border: #1a3a55;
+    --accent: #00d4ff;
+    --accent2: #0099cc;
+    --accent-glow: rgba(0,212,255,0.15);
+    --text: #cce8f4;
+    --text-muted: #5a89a8;
+    --text-dim: #3a6070;
+    --tag-bg: rgba(0,180,220,0.12);
+    --tag-border: rgba(0,180,220,0.35);
+    --grid-line: rgba(0,180,220,0.04);
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Radial glow at top */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 700px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(0,180,220,0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    text-align: center;
+    padding: 56px 0 40px;
+  }
+
+  .site-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(52px, 10vw, 88px);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    text-shadow: 0 0 40px rgba(0,212,255,0.4), 0 0 80px rgba(0,212,255,0.15);
+    line-height: 1;
+  }
+
+  .semester-badge {
+    display: inline-block;
+    margin-top: 14px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    color: var(--accent2);
+    border: 1px solid var(--tag-border);
+    background: var(--tag-bg);
+    padding: 5px 18px;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+
+  .header-line {
+    width: 80px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    margin: 16px auto 0;
+  }
+
+  /* ── SUBJECT SECTION ── */
+  .subject-section {
+    margin-bottom: 36px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg2);
+    overflow: hidden;
+  }
+
+  .subject-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg3);
+  }
+
+  .subject-icon {
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--accent);
+    flex-shrink: 0;
+  }
+
+  .subject-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: var(--text);
+    text-transform: uppercase;
+  }
+
+  .subject-count {
+    margin-left: auto;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  /* ── CAROUSEL ── */
+  .carousel-wrap {
+    position: relative;
+    padding: 16px 0;
+  }
+
+  .carousel-track {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 4px 20px 12px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  .carousel-track::-webkit-scrollbar { height: 4px; }
+  .carousel-track::-webkit-scrollbar-track { background: transparent; }
+  .carousel-track::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* ── PAPER CARD ── */
+  .paper-card {
+    flex-shrink: 0;
+    width: 140px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s;
+    text-decoration: none;
+    display: block;
+  }
+
+  .paper-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 20px rgba(0,212,255,0.12);
+  }
+
+  .paper-thumb {
+    width: 100%;
+    height: 90px;
+    background: #111c28;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .paper-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.85;
+    filter: brightness(0.9) contrast(1.1);
+  }
+
+  .thumb-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .thumb-icon {
+    width: 28px;
+    height: 36px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    position: relative;
+    background: var(--bg3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .thumb-icon::before {
+    content: '';
+    position: absolute;
+    top: -1px; right: -1px;
+    width: 8px; height: 8px;
+    background: var(--bg);
+    border-left: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .thumb-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 6px 6px;
+  }
+
+  .thumb-line {
+    height: 2px;
+    background: var(--border);
+    border-radius: 1px;
+  }
+
+  .thumb-line:nth-child(odd) { width: 85%; }
+  .thumb-line:nth-child(even) { width: 65%; }
+
+  .paper-info {
+    padding: 8px 10px 10px;
+    border-top: 1px solid var(--border);
+  }
+
+  .paper-type {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    color: var(--accent2);
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+
+  .paper-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.35;
+  }
+
+  /* ── SCROLL BUTTONS ── */
+  .scroll-btn {
+    display: none;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28px; height: 28px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    color: var(--accent);
+    font-size: 12px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .scroll-btn:hover { background: var(--bg2); border-color: var(--accent); }
+  .subject-section:hover .scroll-btn { display: flex; }
+  .scroll-btn.left { left: 4px; }
+  .scroll-btn.right { right: 4px; }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    padding: 32px 20px;
+    text-align: center;
+    color: var(--text-dim);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    margin-top: 60px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    padding-bottom: 32px;
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <header>
+    <div class="site-title">PYQS</div>
+    <div class="semester-badge">Semester 4</div>
+    <div class="header-line"></div>
+  </header>
+
+  <div id="subjects-root"></div>
+
+  <footer>
+    &copy; 2025 &nbsp;·&nbsp; Previous Year Question Papers
+  </footer>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   ✏️  EDIT YOUR DATA HERE
+   
+   Each subject has:
+     - name: Subject name (string)
+     - papers: Array of paper objects:
+         { label: "Short label", type: "Mid-Sem" or "End-Sem",
+           year: "2023", month: "May",
+           link: "#"  ← replace with actual PDF link }
+   
+   To add a subject: copy a subject block and paste below.
+   To add a paper:   copy a paper object and paste inside papers[].
+═══════════════════════════════════════════════════════ */
+
+const DATA = {
+  semester: "Semester 4",
+
+  subjects: [
+    {
+      name: "Object Oriented Programming",
+      papers: [
+        
+        { label: "Mid-Sem 2022",  type: "Mid-Sem",  year: "2022", month: "March", link: "#" },
+        { label: "End-Sem 2021",  type: "End-Sem",  year: "2021", month: "May",   link: "#" },
+        { label: "End-Sem 2022",  type: "End-Sem",  year: "2022", month: "May",   link: "#" },
+        { label: "End-Sem 2023",  type: "End-Sem",  year: "2023", month: "May",   link: "#" },
+      ]
+    },
+    {
+      name: "Linear Algebra",
+      papers: [
+        { label: "Mid-Sem 2020",  type: "Mid-Sem",  year: "2020", month: "March", link: "#" },
+        { label: "Mid-Sem 2022",  type: "Mid-Sem",  year: "2022", month: "March", link: "#" },
+        { label: "End-Sem 2022",  type: "End-Sem",  year: "2022", month: "May",   link: "#" },
+      ]
+    },
+    {
+      name: "Software Engineering",
+      papers: [
+        { label: "Mid-Sem 2021",  type: "Mid-Sem",  year: "2021", month: "March", link: "#" },
+        { label: "Mid-Sem 2022",  type: "Mid-Sem",  year: "2022", month: "March", link: "#" },
+        { label: "End-Sem 2022",  type: "End-Sem",  year: "2022", month: "May",   link: "#" },
+      ]
+    },
+    {
+      name: "Data Communication and Networks",
+      papers: [
+        { label: "End-Sem 2020",  type: "End-Sem",  year: "2020", month: "May",   link: "#" },
+        { label: "End-Sem 2021",  type: "End-Sem",  year: "2021", month: "May",   link: "#" },
+        { label: "End-Sem 2022",  type: "End-Sem",  year: "2022", month: "May",   link: "#" },
+        { label: "End-Sem 2023",  type: "End-Sem",  year: "2023", month: "May",   link: "#" },
+        { label: "End-Sem 2023",  type: "End-Sem",  year: "2023", month: "Nov",   link: "#" },
+      ]
+    },
+    {
+      name: "Information Technology and Cyber Security",
+      papers: [
+        { label: "Mid-Sem 2022",  type: "Mid-Sem",  year: "2022", month: "March", link: "#" },
+        { label: "End-Sem 2022",  type: "End-Sem",  year: "2022", month: "May",   link: "#" },
+        { label: "End-Sem 2023",  type: "End-Sem",  year: "2023", month: "May",   link: "#" },
+      ]
+    },
+    {
+      name: "Engineering Mathematics – IV",
+      papers: [
+        { label: "Mid-Sem 2021",  type: "Mid-Sem",  year: "2021", month: "March", link: "#" },
+        { label: "End-Sem 2021",  type: "End-Sem",  year: "2021", month: "May",   link: "#" },
+        { label: "End-Sem 2022",  type: "End-Sem",  year: "2022", month: "May",   link: "#" },
+      ]
+    },
+  ]
+};
+
+/* ═══════════════════════════════════════════════════════
+   ⚙️  RENDERING — you don't need to edit below this line
+═══════════════════════════════════════════════════════ */
+
+function thumbLines() {
+  return [80,60,85,55,75,65].map(w =>
+    `<div class="thumb-line" style="width:${w}%"></div>`
+  ).join('');
+}
+
+function renderCard(paper) {
+  const typeColor = paper.type === 'Mid-Sem' ? '#4ec9e8' : '#00d4ff';
+  return `
+  <a class="paper-card" href="${paper.link}" target="_blank">
+    <div class="paper-thumb">
+      <div class="thumb-placeholder">
+        <div class="thumb-icon">
+          <div class="thumb-lines">${thumbLines()}</div>
+        </div>
+      </div>
+    </div>
+    <div class="paper-info">
+      <div class="paper-type" style="color:${typeColor}">${paper.type}</div>
+      <div class="paper-label">${paper.label}<br>${paper.month} ${paper.year}</div>
+    </div>
+  </a>`;
+}
+
+function renderSubject(subj, idx) {
+  const id = `track-${idx}`;
+  const cards = subj.papers.length
+    ? subj.papers.map(renderCard).join('')
+    : `<div class="empty-state">[ NO PAPERS ADDED YET ]</div>`;
+
+  return `
+  <section class="subject-section">
+    <div class="subject-header">
+      <div class="subject-icon"></div>
+      <span class="subject-title">${subj.name}</span>
+      <span class="subject-count">${subj.papers.length} paper${subj.papers.length !== 1 ? 's' : ''}</span>
+    </div>
+    <div class="carousel-wrap">
+      <button class="scroll-btn left" onclick="scroll('${id}',-1)">&#8249;</button>
+      <div class="carousel-track" id="${id}">${cards}</div>
+      <button class="scroll-btn right" onclick="scroll('${id}',1)">&#8250;</button>
+    </div>
+  </section>`;
+}
+
+function scroll(id, dir) {
+  const el = document.getElementById(id);
+  if (el) el.scrollBy({ left: dir * 320, behavior: 'smooth' });
+}
+
+document.getElementById('subjects-root').innerHTML =
+  DATA.subjects.map(renderSubject).join('');
+</script>
+</body>
+</html>
