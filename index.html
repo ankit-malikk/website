@@ -1,0 +1,204 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Two-User Chat Simulation</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* ===== TOP BAR ===== */
+        .topbar {
+            background-color: #222;
+            color: #fff;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* ===== CHAT LAYOUT ===== */
+        .chat-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .chat-box {
+            background-color: #ffffff;
+            width: 45%;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            text-align: center;
+            font-weight: bold;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            max-width: 70%;
+            padding: 8px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .sender-message {
+            background-color: #d1e7ff;
+            align-self: flex-end;
+            text-align: right;
+        }
+
+        .receiver-message {
+            background-color: #d4edda;
+            align-self: flex-start;
+            text-align: left;
+        }
+
+        .timestamp {
+            font-size: 11px;
+            color: #555;
+            margin-top: 3px;
+        }
+
+        .input-area {
+            display: flex;
+            padding: 10px;
+            gap: 5px;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        .input-area button {
+            padding: 8px 12px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .clear-btn {
+            margin: 20px auto 0;
+            display: block;
+            padding: 8px 15px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ===== TOP BAR ===== -->
+<div class="topbar">
+    <div>Name: Ankit</div>
+    <div>SAP ID: 590014774</div>
+</div>
+
+<h2>Two-User Chat Simulation</h2>
+
+<div class="chat-container">
+
+    <!-- Sender -->
+    <div class="chat-box">
+        <div class="chat-header">Sender</div>
+        <div class="messages" id="senderMessages"></div>
+        <div class="input-area">
+            <input type="text" id="senderInput" placeholder="Type a message">
+            <button onclick="sendMessage('sender')">Send</button>
+        </div>
+    </div>
+
+    <!-- Receiver -->
+    <div class="chat-box">
+        <div class="chat-header">Receiver</div>
+        <div class="messages" id="receiverMessages"></div>
+        <div class="input-area">
+            <input type="text" id="receiverInput" placeholder="Type a message">
+            <button onclick="sendMessage('receiver')">Send</button>
+        </div>
+    </div>
+
+</div>
+
+<button class="clear-btn" onclick="clearChat()">Clear Chat</button>
+
+<script>
+    function getTime() {
+        const now = new Date();
+        return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function sendMessage(user) {
+        const input = user === 'sender'
+            ? document.getElementById('senderInput')
+            : document.getElementById('receiverInput');
+
+        const text = input.value.trim();
+        if (text === "") return;
+
+        const senderBox = document.getElementById('senderMessages');
+        const receiverBox = document.getElementById('receiverMessages');
+
+        const msg = document.createElement('div');
+        msg.className = 'message ' + (user === 'sender' ? 'sender-message' : 'receiver-message');
+        msg.innerHTML = text + `<div class="timestamp">${getTime()}</div>`;
+
+        senderBox.appendChild(msg);
+        receiverBox.appendChild(msg.cloneNode(true));
+
+        senderBox.scrollTop = senderBox.scrollHeight;
+        receiverBox.scrollTop = receiverBox.scrollHeight;
+
+        input.value = "";
+    }
+
+    function clearChat() {
+        document.getElementById('senderMessages').innerHTML = "";
+        document.getElementById('receiverMessages').innerHTML = "";
+    }
+
+    document.getElementById('senderInput').addEventListener('keypress', e => {
+        if (e.key === 'Enter') sendMessage('sender');
+    });
+
+    document.getElementById('receiverInput').addEventListener('keypress', e => {
+        if (e.key === 'Enter') sendMessage('receiver');
+    });
+</script>
+
+</body>
+</html>

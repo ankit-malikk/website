@@ -1,0 +1,25 @@
+div{
+    height: 100px;
+    width : 100px;
+    background-color: red;
+    /*border-style: solid;
+    border-width: 2px;
+    border-color: brown;*/
+    border: 2px solid brown;
+    border-radius: 50%;
+    padding-left: 50px;
+    padding-top: 30px;
+    margin-top: 50px;
+    display: inline;
+    color: rgba( 255, 35, 64, 0.9);
+}
+h1{
+    width: 100px;
+    min-height: 100px;
+    background-color: aqua;
+    border-width: 5px;
+    border-color: black;
+    text-align: center;
+    border-style: dotted;
+
+}
